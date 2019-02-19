@@ -8,6 +8,7 @@
 * `user`: *Required* User credential for login using ssh
 * `private_key`: *Required* Key for the specified user
 * `disable_version_path`: default is `false`. Then `false` `out` will put content in a directory named by the version name. This directory is omitted when this option is enabled. Note that `check` and `in` origins will treat all the files in the `base_dir` as versions in this case.
+* `include`: default is `*`. A mask for files to transfer.
 
 All config required for each of the `in`, `out` and `check` behaviors.
 
@@ -18,7 +19,7 @@ resource_types:
 - name: rsync-resource
   type: docker-image
   source:
-      repository: mrsixw/concourse-rsync-resource
+      repository: rexdb/concourse-rsync-resource
       tag: latest
 
 resources:
@@ -27,6 +28,7 @@ resources:
   source:
     server: server
     base_dir: /sync_directory
+    include: "*.whl"
     user : user
     private_key: |
             ...
@@ -44,7 +46,7 @@ resources:
             ...
 
 jobs:
--name: my_great_job
+- name: my_great_job
   plan:
     ...
     put: sync-resource
@@ -52,7 +54,7 @@ jobs:
     put: sync-resource
       params: {
           "sync_dir" : "my_output_dir",
-          "rsync_opts": ["-Pav", "--del", "--chmod=Du=rwx,Dgo=rx,Fu=rw,Fog=r"]
+          "rsync_opts": ["--del", "--chmod=Du=rwx,Dgo=rx,Fu=rw,Fog=r"]
       }
 ```
 
