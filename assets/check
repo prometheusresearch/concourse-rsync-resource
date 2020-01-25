@@ -32,6 +32,7 @@ echo -e "Host $SERVER\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 chmod -R 600 ~/.ssh
 
 eval $(ssh-agent)  1>&2  >/dev/null
+trap "ssh-agent -k 1>&2" exit
 SSH_ASKPASS=/opt/resource/askpass.sh DISPLAY= ssh-add ~/.ssh/server_key  1>&2  >/dev/null
 
 REFS=''
